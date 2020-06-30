@@ -2,36 +2,39 @@
 * 原题链接：https://leetcode-cn.com/problems/3sum/
 *
 * 步骤：
-* 见代码注释；
+* 1.先遍历
+* 2.内部使用双指针
 *
 * */
 
-function threeSum(nums) {
-  let res = []
-  let length = nums.length;
+
+function threeSum (nums) {
   nums.sort((a, b) => a - b) // 先递增排序
-  if (nums[0] <= 0 && nums[length - 1] >= 0) { // 整个数组同符号，则无解
-    for (let i = 0; i < length - 2;) {
-      if (nums[i] > 0) break; // 最左值为正数则一定无解
-      let first = i + 1
-      let last = length - 1
-      do {
-        if (first >= last || nums[i] * nums[last] > 0) break // 两人选相遇，或者三人同符号，则退出
-        let result = nums[i] + nums[first] + nums[last]
-        if (result === 0) { // 如果可以组队
-          res.push([nums[i], nums[first], nums[last]])
+  let result = []
+  for (let i = 0; i < nums.length - 2; i++) {
+    if (i === 0 || (i > 0 && nums[i] !== nums[i - 1])) {  // 跳过可能重复的答案
+
+      let l = i + 1, r = nums.length - 1, sum = 0 - nums[i];
+      while (l < r) {
+        if (nums[l] + nums[r] === sum) {
+          result.push([nums[i], nums[l], nums[r]]);
+          while (l < r && nums[l] === nums[l + 1]) l++;
+          while (l < r && nums[r] === nums[r - 1]) r--;
+          l++;
+          r--;
+        } else if (nums[l] + nums[r] < sum) {
+          while (l < r && nums[l] === nums[l + 1]) l++;   // 跳过重复值
+          l++;
+        } else {
+          while (l < r && nums[r] === nums[r - 1]) r--;
+          r--;
         }
-        if (result <= 0 ) { // first右移一位
-          while (first < last && nums[first] === nums[++first]){} // 如果相等就跳过
-        } else { // last左移一位
-          while (first < last && nums[last] === nums[--last]) {}
-        }
-      } while (first < last)
-      // 如果i相等就跳过。
-      while (nums[i] === nums[++i]) {}
+      }
     }
   }
-  return res
+  return result;
 }
 
-console.log(threeSum([-1, 0, 1, 2, -1, -4]))
+console.log(threeSum([-1,0,1,2,-1,-4]))
+console.log(threeSum([-2,-1,1,2]))
+console.log(threeSum([0,0,0,0]))
